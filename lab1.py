@@ -55,12 +55,14 @@ class LAB1:
         """ Exercise 11.4
         Sum of 1 to N numbers
         """
-        N = int(input())
-        sumM = 0
-        for number in range(0, N+1):
-            sumM += number;
-            number += 1
-        print(sumM)
+        # print(str(sum([int(digit) for digit in str(input())])))
+        print(str(sum([int(digit) for digit in range(0, int(input())+1)])))
+        # N = int(input())
+        # sumM = 0
+        # for number in range(0, N+1):
+        #     sumM += number;
+        #     number += 1
+        # print(sumM)
 
 
     def ex5_DiamondPattern():
@@ -196,3 +198,4 @@ class LAB1:
                     lastRow += (space + star)
                 print(lastRow)
 
+LAB1.ex4_SumOneToN()
