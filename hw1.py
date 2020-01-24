@@ -73,7 +73,7 @@ class Player:
     '''
     ## constants
     ## 69 displayed squares because each player takes 1 space
-    RACELINE = "_____________________________________________________________________"   
+    RACELINE = "______________________________________________________________________"   
 
     TIE_MESSAGE = "it's a tie"
     COLLISION_MESSAGE = "OUCH!!!"
