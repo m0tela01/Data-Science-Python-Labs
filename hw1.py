@@ -72,8 +72,8 @@ class Player:
     '''Class for a race participant in the historical race.
     '''
     ## constants
-    ## 68 displayed squares because each player takes 1 space
-    RACELINE = "____________________________________________________________________"   
+    ## 69 displayed squares because each player takes 1 space
+    RACELINE = "_____________________________________________________________________"   
 
     TIE_MESSAGE = "it's a tie"
     COLLISION_MESSAGE = "OUCH!!!"
