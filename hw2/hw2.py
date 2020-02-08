@@ -2,7 +2,7 @@ import random
 import time
 import numpy as np
 import math
-import pandas as pd
+from itertools import combinations
 import sys
 
 import win32com.client
@@ -11,7 +11,6 @@ shell.SendKeys("{ENTER}")
 import pygame
 pygame.init()
 
-VK_RETURN = 0x0D                # ENTER key
 
 ### Exercise 6.8 problem break down
     ## create a dictionary that maps numbers to their corresponding word equivalents
@@ -19,8 +18,8 @@ VK_RETURN = 0x0D                # ENTER key
     ## if input 112.43 output is ONE HUNDRED TWELVE AND 43/100
 
 
-class helper:
-    '''Class for misc functions.'''
+class equivalents:
+    '''Class for equivalents of number to string.'''
         
     dictOfNumbers = {
         -1: "AND",
@@ -63,7 +62,7 @@ class helper:
     def dictJoiner(self, element):
         self.elements.append(self.words[element])
 
-    def dictResolver(self, value=str(input())):
+    def dictResolver(self, value=str(input("Enter a number less than 4 digits"))):
         numbers = [-1 if number is "." else int(number) for number in value]
         cents, index = 0, 0
         if len(numbers) > 1:
@@ -89,16 +88,24 @@ class helper:
                     pass
 
                 self.elements.append(cents)
-                
-        else:
-            print(self.words[numbers[0]])
+        else:                
+            if len(numbers) is 1:
+                print(self.words[numbers[0]])
 
 
     def print(self, args):
         print(*args)
 
-
+### Exercise 7.10 problem break down
+    ## play two-dimensional Tic-Tac-Toe between two people enterint their moves
+    ## game is played on the same computer
+    ## 3x3 array for the board
+    ## player should indicate move by entering two numbers for row and column indices
+    ## player 1 is X, player 2 is O
+    ## moves must be for empty squares
+    ## determine if game is over after each round whether its a draw or win
 class tickTackToe():
+
     board = {
         "TOP_LEFT": [1, pygame.Rect(1,1, 199,199), (80,80)],
         "TOP_MID": [2, pygame.Rect(201,1, 401,199), (280,80)],
@@ -137,57 +144,83 @@ class tickTackToe():
         self.xTurn = True
         self.xText = self.font.render("X", True, (0,0,0))
         self.oText = self.font.render("O", True, (0,0,0))
-        self.x = 0
-        self.y = 0
+        # self.x = 0
+        # self.y = 0
 
         self.player1 = []
         self.player2 = []
 
         
+    def resetGame(self):
+        self.simulate = True
+        self.xTurn = True
+        self.player1 = []
+        self.player2 = []
+        self.screen.fill((33,206,153))
+    
+        pygame.draw.line(self.screen, (0,0,0), (int((self.width-2)/3), 1), (int((self.width-2)/3), 603), 1)
+        pygame.draw.line(self.screen, (0,0,0), (int(2 * (self.width-2)/3), 1), (int(2 * (self.width-2)/3), 603), 1)
 
+        pygame.draw.line(self.screen, (0,0,0), (1, int((self.width-2)/3)), (603, (int(self.width-2)/3)), 1)
+        pygame.draw.line(self.screen, (0,0,0), (1, int(2 * (self.width-2)/3)), (603, int(2 * (self.width-2)/3)), 1)
+        pygame.display.flip()        
 
     def checkPlayerMove(self, moves, player):
-        if (self.win == moves).all(1).any():
-            self.simulate = False
-            self.winMessage = self.font.render(player + "'s win!", True, (0,0,0))
-            self.screen.blit(self.winMessage, (220, 20))
-            self.screen.blit(self.winMessage, (220, 220))
-            self.screen.blit(self.winMessage, (220, 420))
-            pygame.display.flip()
-            time.sleep(4.0)
+        moves = list(combinations(moves, 3))
+        for move in moves:
+            if (self.win == move).all(1).any():
+                self.simulate = False
+                self.winMessage = self.font.render(player, True, (0,0,0))
+                self.screen.blit(self.winMessage, (220, 20))
+                self.screen.blit(self.winMessage, (220, 220))
+                self.screen.blit(self.winMessage, (220, 420))
+                pygame.display.flip()
+                time.sleep(2.0)
+                break
 
     def checkGame(self):
-
-        if len(self.player1) is 3:
+        if len(self.player1) >= 3:
             moves = np.array(self.player1)
             moves.sort()
-            self.checkPlayerMove(moves, "X")
-            # if (self.win == moves).all(1).any():
-            #     self.simulate = False
-            #     self.winMessage = self.font.render("X's win!", True, (0,0,0))
-            #     self.screen.blit(self.winMessage, (280, 220))
-
-        if len(self.player2) is 3:
+            self.checkPlayerMove(moves, "X's win!")
+        if len(self.player2) >= 3:
             moves = np.array(self.player2)
             moves.sort()
-            self.checkPlayerMove(moves, "O")
-            # if (self.win == moves).all(1).any():
-            #     self.simulate = False
-            #     self.winMessage = self.font.render("O's win!", True, (0,0,0))
-            #     self.screen.blit(self.winMessage, (280, 220))
+            self.checkPlayerMove(moves, "O's win!")
+        if len(self.player1) + len(self.player2) is 9 and self.simulate is True:
+            self.simulate = False
+            self.winMessage = self.font.render("  Draw", True, (0,0,0))
+            self.screen.blit(self.winMessage, (220, 220))
+            pygame.display.flip()
+            time.sleep(2.0)
 
 
     def doMove(self, drawLocation, boardLocation):
-        if self.xTurn:
+        if len(self.player1) is 0:
             print('X')
             self.screen.blit(self.xText, drawLocation)
             self.player1.append(self.board[boardLocation][0])
+            self.xTurn ^=True
         else:
-            print('O')
-            self.screen.blit(self.oText, drawLocation)
-            self.player2.append(self.board[boardLocation][0])
+            if len(self.player2) is 0 and self.board[boardLocation][0] not in self.player1:
+                print('O')
+                self.screen.blit(self.oText, drawLocation)
+                self.player2.append(self.board[boardLocation][0])
+                self.xTurn ^=True
+            else:
+                if self.board[boardLocation][0] in self.player1 or self.board[boardLocation][0] in self.player2:
+                    print("cannot be in same box")
+                else:
+                    if self.xTurn:
+                        print('X')
+                        self.screen.blit(self.xText, drawLocation)
+                        self.player1.append(self.board[boardLocation][0])
+                    else:
+                        print('O')
+                        self.screen.blit(self.oText, drawLocation)
+                        self.player2.append(self.board[boardLocation][0])
 
-        self.xTurn ^=True
+                    self.xTurn ^=True
     
     def drawer(self):
         self.screen.fill((33,206,153))
@@ -201,7 +234,7 @@ class tickTackToe():
 
         while self.simulate is True:
             for event in pygame.event.get():
-                self.x, self.y = pygame.mouse.get_pos()
+                # self.x, self.y = pygame.mouse.get_pos()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -232,23 +265,26 @@ class tickTackToe():
                     pygame.display.flip()
                 
                 self.checkGame()
+
+                if self.simulate is False:
+                    self.resetGame()
         
 
         
 
 
 def main():
-    # h = helper()
-    # h.dictResolver()
-    # h.print(h.elements)
+    h = equivalents()
+    h.dictResolver()
+    h.print(h.elements)
 
     
 
     
     
     
-    t = tickTackToe()
-    t.drawer()
+    # t = tickTackToe()
+    # t.drawer()
 
 
 
