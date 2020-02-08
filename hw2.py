@@ -117,7 +117,7 @@ class tickTackToe():
         [4,5,6],
         [7,8,9],
         [1,4,7],
-        [2,5,6],
+        [2,5,8],
         [3,6,9],
         [1,5,9],
         [3,5,7]
@@ -144,6 +144,39 @@ class tickTackToe():
         self.player2 = []
 
         
+
+
+    def checkPlayerMove(self, moves, player):
+        if (self.win == moves).all(1).any():
+            self.simulate = False
+            self.winMessage = self.font.render(player + "'s win!", True, (0,0,0))
+            self.screen.blit(self.winMessage, (220, 20))
+            self.screen.blit(self.winMessage, (220, 220))
+            self.screen.blit(self.winMessage, (220, 420))
+            pygame.display.flip()
+            time.sleep(4.0)
+
+    def checkGame(self):
+
+        if len(self.player1) is 3:
+            moves = np.array(self.player1)
+            moves.sort()
+            self.checkPlayerMove(moves, "X")
+            # if (self.win == moves).all(1).any():
+            #     self.simulate = False
+            #     self.winMessage = self.font.render("X's win!", True, (0,0,0))
+            #     self.screen.blit(self.winMessage, (280, 220))
+
+        if len(self.player2) is 3:
+            moves = np.array(self.player2)
+            moves.sort()
+            self.checkPlayerMove(moves, "O")
+            # if (self.win == moves).all(1).any():
+            #     self.simulate = False
+            #     self.winMessage = self.font.render("O's win!", True, (0,0,0))
+            #     self.screen.blit(self.winMessage, (280, 220))
+
+
     def doMove(self, drawLocation, boardLocation):
         if self.xTurn:
             print('X')
@@ -155,27 +188,6 @@ class tickTackToe():
             self.player2.append(self.board[boardLocation][0])
 
         self.xTurn ^=True
-
-
-    def checkGame(self):
-        
-        if len(self.player1) is 3:
-            moves = np.array(self.player1)
-            moves.sort()
-            if (self.win == moves).all(1).any():
-                self.simulate = False
-                self.winMessage = self.font.render("X's win!", True, (0,0,0))
-                 self.screen.blit(self.winMessage)
-
-        if len(self.player2) is 3:
-            moves = np.array(self.player2)
-            moves.sort()
-            if (self.win == moves).all(1).any():
-                self.simulate = False
-                self.winMessage = self.font.render("O's win!", True, (0,0,0))
-                self.screen.blit(self.winMessage)
-
-
     
     def drawer(self):
         self.screen.fill((33,206,153))
